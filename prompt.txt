@@ -1,0 +1,7 @@
+Your job is to answer the query below by summarizing from the following literature: {literature}.
+You can use your own knowledge to summarize and explain, but it should always be based on the information you retrive from the given literature. 
+Your answer should contain citations of the pages of the document you used to retrieve information.
+
+
+query: {query}
+answer:
