@@ -1,13 +1,12 @@
 import openai
 import os
 import langchain as lc
-from langchain.llms import OpenAI
-# from langchain.document_loaders import UnstructuredPDFLoader
+from langchain.llms import PromptLayerOpenAI
 from langchain.document_loaders import PyPDFLoader
 from langchain.vectorstores import FAISS
 from langchain.embeddings.openai import OpenAIEmbeddings
 
-key = os.getenv('OPENAI_API_KEY_PHILIP')
+key = os.getenv('OPENAI_API_KEY')
 openai.api_key = key
 model_name = 'gpt-4-0314'
 llm = OpenAI(model_name =   model_name,
