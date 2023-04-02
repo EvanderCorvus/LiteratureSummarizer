@@ -1,0 +1,7 @@
+Here is a page from literature that could include infromation that is relevant for future queries: {page}.
+
+You are an information extractor. You will receive a query. 
+If the previously given page contains relevant information for the query, you will copy that information without altering it.
+
+Query: {query}
+Relevant Information:

@@ -1,33 +1,36 @@
 import openai
+from langchain.llms import OpenAI
 import os
 import langchain as lc
 from langchain.llms import PromptLayerOpenAI
 from langchain.document_loaders import PyPDFLoader
 from langchain.vectorstores import FAISS
 from langchain.embeddings.openai import OpenAIEmbeddings
+from llm_utilities import *
+from langchain.callbacks import get_openai_callback
 
 key = os.getenv('OPENAI_API_KEY')
 openai.api_key = key
-model_name = 'gpt-4-0314'
-llm = OpenAI(model_name =   model_name,
-             temperature=   1)
+
+llm_page_extractor = get_llm('text-curie-001', 1)
+llm_query_answering = get_llm('text-davinci-003', 0.8)
 
 
-fname = 'prompt.txt'
-with open(fname,'r') as f:
-    template = f.read()
+query = """Welche sind sie die unterschiedlichen Auswahlsregeln für Rotations- und Vibrationsübergänge in Molekülen?""" 
 
-query = """ Explain the holographic principle, to someone who has only machine learning, neural network background and knows only a little bit about quantum theory.""" 
-
-faiss_index = FAISS.load_local('MLLiteratur', OpenAIEmbeddings())
-docs = faiss_index.similarity_search(query, k=20)
+docs = make_query_from_faissindex('PhysicsLiterature', query, 1)
 literature = ''
 
-for doc in docs:
-    literature += str("source:" + doc.metadata["source"]) + "," + "page:" + str(doc.metadata["page"]) + "content:" + doc.page_content
-
-prompt = lc.PromptTemplate(input_variables=['literature','query'],template=template)
-
-llm_chain = lc.LLMChain(prompt=prompt,llm=llm)
-
-print(llm_chain.run(literature = literature, query=query))
+# for doc in docs:
+#     relevant_info =  str("source:" + doc.metadata["source"]) + "," + "page:" + str(doc.metadata["page"]) + "content:" + run_page_infoextracter_chain(doc.page_content, query, llm_page_extractor)
+#     literature += relevant_info
+#     print("Page content: \n\n" + doc.page_content +"\n")
+#     print("Relevant content: \n\n" + relevant_info + "\n")
+#     #literature += str("source:" + doc.metadata["source"]) + "," + "page:" + str(doc.metadata["page"]) + "content:" + doc.page_content
+with get_openai_callback() as cb:
+    print(run_query_answering_chain(literature, query, llm_query_answering))
+    print(f"Total Tokens: {cb.total_tokens}")
+    print(f"Prompt Tokens: {cb.prompt_tokens}")
+    print(f"Completion Tokens: {cb.completion_tokens}")
+    print(f"Successful Requests: {cb.successful_requests}")
+    print(f"Total Cost (USD): ${cb.total_cost}")

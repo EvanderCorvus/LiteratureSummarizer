@@ -17,6 +17,8 @@ def get_template(template_name):
     return template
 
 def make_query_from_faissindex(indexname, query, k):
+    # path = 'literature/' + indexname + '/index.faiss'
+    # print(os.path.isfile(path))   File can be found and is there
     faiss_index = FAISS.load_local('literature/' + indexname, OpenAIEmbeddings())
     docs = faiss_index.similarity_search(query, k=k)
     for doc in docs:
